@@ -1,0 +1,61 @@
+pipeline {
+    agent none
+
+    stages 
+    {
+        stage("checkout and compile project") 
+        {
+            agent any
+           
+            stages 
+            {
+               
+               stage("checkout") 
+               {
+                   steps 
+                   {
+                      git credentialsId: 'github-arvind', url: 'https://github.com/barvind89/Test_jenkins/'
+                   }
+               }
+               
+               stage("clean") 
+               {
+                   steps 
+                   {
+                      dir('insecure-bank-master') 
+                      {
+                          bat 'mvn clean'
+                      }
+                      
+                   }
+               }
+               stage("compile") 
+               {
+                   steps 
+                   {
+                       dir('insecure-bank-master') 
+                      {
+                          bat 'mvn package'
+                      }
+                      
+                   }
+               }
+            }
+            post {
+                success 
+                {
+                    stash name: "artifacts", includes: "**/*.war"
+                }
+            }
+        }
+
+        stage("Run Scan") 
+        {
+            agent any
+            steps 
+            {
+                bat 'echo deploy'
+            }
+        }
+    }
+}
