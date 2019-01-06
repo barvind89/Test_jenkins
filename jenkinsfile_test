@@ -54,7 +54,7 @@ pipeline {
             agent any
             steps 
             {
-                bat 'echo deploy'
+                bat 'echo %scm_repo%'
             }
         }
     }
